@@ -1,14 +1,21 @@
+//React
 import React from "react";
+import { Routes, Route, Switch } from "react-router-dom";
+//блоки
 import Header from "./Header.jsx";
+import Login from "./Login.jsx";
+import Register from "./Register.jsx";
 import Main from "./Main.jsx";
 import Footer from "./Footer.jsx";
+//попапы
 import PopupWithForm from "./PopupWithForm.jsx";
 import ImagePopup from "./ImagePopup.jsx";
-import api from "../utils/Api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditProfilePopup from "./EditProfilePopup.jsx";
 import EditAvatarPopup from "./EditAvatarPopup.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
+//прочее
+import api from "../utils/Api";
+import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -178,39 +185,65 @@ export default function App() {
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
           <Header />
-          <Main
-            cards={cards}
-            onEditProfile={openPopupEdit}
-            onAddPlace={openPopupAddPlace}
-            onEditAvatar={openPopupEditAvatar}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-          />
-          <Footer />
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-          />
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar}
-          />
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlace={handleAddPlaceSubmit}
-          />
-          <PopupWithForm
-            name="card-delete"
-            title="Вы уверены?"
-            buttonText="Да"
-          ></PopupWithForm>
-          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+          <Routes>
+            <Route
+              path="/" //поменять на "/sign-in"
+              element={<Login />}
+            />
+            <Route
+              path="/sign-up"
+              element={
+                <div className="registerContainer">
+                  <Register />
+                </div>
+              }
+            />
+            <Route
+              path="/sign-in" //поменять на "/"
+              element={
+                <div className="registerContainer">
+                  <>
+                    <Main
+                      cards={cards}
+                      onEditProfile={openPopupEdit}
+                      onAddPlace={openPopupAddPlace}
+                      onEditAvatar={openPopupEditAvatar}
+                      onCardClick={handleCardClick}
+                      onCardLike={handleCardLike}
+                      onCardDelete={handleCardDelete}
+                    />
+                    <Footer />
+                    <EditProfilePopup
+                      isOpen={isEditProfilePopupOpen}
+                      onClose={closeAllPopups}
+                      onUpdateUser={handleUpdateUser}
+                    />
+                    <EditAvatarPopup
+                      isOpen={isEditAvatarPopupOpen}
+                      onClose={closeAllPopups}
+                      onUpdateAvatar={handleUpdateAvatar}
+                    />
+                    <AddPlacePopup
+                      isOpen={isAddPlacePopupOpen}
+                      onClose={closeAllPopups}
+                      onAddPlace={handleAddPlaceSubmit}
+                    />
+                    <PopupWithForm
+                      name="card-delete"
+                      title="Вы уверены?"
+                      buttonText="Да"
+                    ></PopupWithForm>
+                    <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+                  </>
+                </div>
+              }
+            />
+          </Routes>
         </div>
       </CurrentUserContext.Provider>
     </div>
   );
 }
+/*
+
+*/
