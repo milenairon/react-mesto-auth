@@ -1,18 +1,20 @@
 //React
 import React from "react";
-import { Routes, Route, Switch } from "react-router-dom";
+import { Routes, Route, Switch, Navigate } from "react-router-dom";
 //блоки
 import Header from "./Header.jsx";
 import Login from "./Login.jsx";
 import Register from "./Register.jsx";
 import Main from "./Main.jsx";
 import Footer from "./Footer.jsx";
+import ProtectedRouteElement from "./ProtectedRoute";
 //попапы
 import PopupWithForm from "./PopupWithForm.jsx";
 import ImagePopup from "./ImagePopup.jsx";
 import EditProfilePopup from "./EditProfilePopup.jsx";
 import EditAvatarPopup from "./EditAvatarPopup.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
+import InfoTooltip from "./InfoTooltip";
 //прочее
 import api from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
@@ -179,65 +181,87 @@ export default function App() {
         console.log(error);
       });
   }, []);
+  let loggedIn = false; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
 
   return (
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          {/*<Login /> && <Header anotherPage='Регистрация' pathPage="/sign-up"/>*/}
-          {<Register /> && <Header anotherPage="Войти" pathPage="/sign-in" />}
+          {<Login /> && (
+            <Header anotherPage="Регистрация" pathPage="/sign-up" />
+          )}
+          {/*<Register /> && <Header anotherPage="Войти" pathPage="/sign-in" />*/}
+          {/*<Register /> && <Header email='email' anotherPage="Выйти" pathPage="/main" />*/}
           <Routes>
-            <Route path="/sign-in" element={<Login />} /*sign-in*/ />
             <Route
-              path="/sign-up" //поменять на "/sign-up"
-              element={<Register />}
-            />
-            <Route
-              path="/" //поменять на "/"
+              path="/"
               element={
-                <div className="registerContainer">
-                  <>
-                    <Main
-                      cards={cards}
-                      onEditProfile={openPopupEdit}
-                      onAddPlace={openPopupAddPlace}
-                      onEditAvatar={openPopupEditAvatar}
-                      onCardClick={handleCardClick}
-                      onCardLike={handleCardLike}
-                      onCardDelete={handleCardDelete}
-                    />
-                    <Footer />
-                    <EditProfilePopup
-                      isOpen={isEditProfilePopupOpen}
-                      onClose={closeAllPopups}
-                      onUpdateUser={handleUpdateUser}
-                    />
-                    <EditAvatarPopup
-                      isOpen={isEditAvatarPopupOpen}
-                      onClose={closeAllPopups}
-                      onUpdateAvatar={handleUpdateAvatar}
-                    />
-                    <AddPlacePopup
-                      isOpen={isAddPlacePopupOpen}
-                      onClose={closeAllPopups}
-                      onAddPlace={handleAddPlaceSubmit}
-                    />
-                    <PopupWithForm
-                      name="card-delete"
-                      title="Вы уверены?"
-                      buttonText="Да"
-                    ></PopupWithForm>
-                    <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-                  </>
-                </div>
+                loggedIn ? (
+                  <Navigate to="/main" replace />
+                ) : (
+                  <Navigate to="/sign-in" replace />
+                )
               }
             />
+            <Route
+              path="/main"
+              element={
+                <ProtectedRouteElement
+                  element={
+                    <>
+                      <Main
+                        cards={cards}
+                        onEditProfile={openPopupEdit}
+                        onAddPlace={openPopupAddPlace}
+                        onEditAvatar={openPopupEditAvatar}
+                        onCardClick={handleCardClick}
+                        onCardLike={handleCardLike}
+                        onCardDelete={handleCardDelete}
+                      />
+                      <Footer />
+                      <EditProfilePopup
+                        isOpen={isEditProfilePopupOpen}
+                        onClose={closeAllPopups}
+                        onUpdateUser={handleUpdateUser}
+                      />
+                      <EditAvatarPopup
+                        isOpen={isEditAvatarPopupOpen}
+                        onClose={closeAllPopups}
+                        onUpdateAvatar={handleUpdateAvatar}
+                      />
+                      <AddPlacePopup
+                        isOpen={isAddPlacePopupOpen}
+                        onClose={closeAllPopups}
+                        onAddPlace={handleAddPlaceSubmit}
+                      />
+                      <PopupWithForm
+                        name="card-delete"
+                        title="Вы уверены?"
+                        buttonText="Да"
+                      ></PopupWithForm>
+                      <ImagePopup
+                        card={selectedCard}
+                        onClose={closeAllPopups}
+                      />
+                    </>
+                  }
+                  loggedIn={loggedIn}
+                />
+              }
+            />
+            <Route
+              path="/sign-in"
+              element={
+                <>
+                  <Login />
+      
+                </>
+              }
+            />
+            <Route path="/sign-up" element={<Register />} />
           </Routes>
         </div>
       </CurrentUserContext.Provider>
     </div>
   );
 }
-/*
-
-*/
