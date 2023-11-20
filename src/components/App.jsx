@@ -184,22 +184,16 @@ export default function App() {
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          <Header />
+          {/*<Login /> && <Header anotherPage='Регистрация' pathPage="/sign-up"/>*/}
+          {<Register /> && <Header anotherPage="Войти" pathPage="/sign-in" />}
           <Routes>
+            <Route path="/sign-in" element={<Login />} /*sign-in*/ />
             <Route
-              path="/" //поменять на "/sign-in"
-              element={<Login />}
+              path="/sign-up" //поменять на "/sign-up"
+              element={<Register />}
             />
             <Route
-              path="/sign-up"
-              element={
-                <div className="registerContainer">
-                  <Register />
-                </div>
-              }
-            />
-            <Route
-              path="/sign-in" //поменять на "/"
+              path="/" //поменять на "/"
               element={
                 <div className="registerContainer">
                   <>

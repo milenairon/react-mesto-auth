@@ -1,16 +1,14 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../images/logo.svg";
 
-export default function Header() {
+export default function Header({ anotherPage, pathPage }) {
   return (
     <header className="header">
       <img className="logo" src={logo} alt="Место. Россия" />
-      <button
-        aria-label="Регистрация" //{props.buttonText}
-        className="header__button header__button_theme_dark"
-        type="button"
-      >
-        Регистрация
-      </button>
+      <Link className="header__link-another-page" to={pathPage}>
+        {anotherPage}
+      </Link>
     </header>
   );
 }
