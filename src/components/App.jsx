@@ -7,7 +7,7 @@ import Login from "./Login.jsx";
 import Register from "./Register.jsx";
 import Main from "./Main.jsx";
 import Footer from "./Footer.jsx";
-import ProtectedRouteElement from "./ProtectedRoute";
+import ProtectedRouteElement from "./ProtectedRoute.js";
 //попапы
 import PopupWithForm from "./PopupWithForm.jsx";
 import ImagePopup from "./ImagePopup.jsx";
@@ -201,7 +201,7 @@ export default function App() {
         console.log(error);
       });
   }, []);
-  let loggedIn = true; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
+  let loggedIn = false; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
 
   return (
     <div className="app">
@@ -224,47 +224,20 @@ export default function App() {
             <Route
               path="/main"
               element={
-                <ProtectedRouteElement
-                  element={
-                    <>
-                      <Main
-                        cards={cards}
-                        onEditProfile={openPopupEdit}
-                        onAddPlace={openPopupAddPlace}
-                        onEditAvatar={openPopupEditAvatar}
-                        onCardClick={handleCardClick}
-                        onCardLike={handleCardLike}
-                        onCardDelete={handleCardDelete}
-                      />
-                      <Footer />
-                      <EditProfilePopup
-                        isOpen={isEditProfilePopupOpen}
-                        onClose={closeAllPopups}
-                        onUpdateUser={handleUpdateUser}
-                      />
-                      <EditAvatarPopup
-                        isOpen={isEditAvatarPopupOpen}
-                        onClose={closeAllPopups}
-                        onUpdateAvatar={handleUpdateAvatar}
-                      />
-                      <AddPlacePopup
-                        isOpen={isAddPlacePopupOpen}
-                        onClose={closeAllPopups}
-                        onAddPlace={handleAddPlaceSubmit}
-                      />
-                      <PopupWithForm
-                        name="card-delete"
-                        title="Вы уверены?"
-                        buttonText="Да"
-                      ></PopupWithForm>
-                      <ImagePopup
-                        card={selectedCard}
-                        onClose={closeAllPopups}
-                      />
-                    </>
-                  }
-                  loggedIn={loggedIn}
-                />
+                <>
+                  <ProtectedRouteElement
+                    element={Main}
+                    loggedIn={loggedIn}
+                    cards={cards}
+                    onEditProfile={openPopupEdit}
+                    onAddPlace={openPopupAddPlace}
+                    onEditAvatar={openPopupEditAvatar}
+                    onCardClick={handleCardClick}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                  />
+                  <Footer />
+                </>
               }
             />
             <Route
@@ -302,6 +275,27 @@ export default function App() {
               }
             />
           </Routes>
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+          />
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar}
+          />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}
+          />
+          <PopupWithForm
+            name="card-delete"
+            title="Вы уверены?"
+            buttonText="Да"
+          ></PopupWithForm>
+          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
         </div>
       </CurrentUserContext.Provider>
     </div>
