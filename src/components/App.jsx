@@ -1,6 +1,6 @@
 //React
 import React from "react";
-import { Routes, Route, Switch, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 //блоки
 import Header from "./Header.jsx";
 import Login from "./Login.jsx";
@@ -18,6 +18,8 @@ import InfoTooltip from "./InfoTooltip";
 //прочее
 import api from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
+import popupUnionIconCheckMark from "../images/popupUnionIconCheckMark.svg";
+import popupUnionIconTheCross from "../images/popupUnionIconTheCross.svg";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -27,12 +29,19 @@ export default function App() {
     React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState(null);
+  const [infoTooltipRegisterPopupOpen, setInfoTooltipRegisterPopupOpen] =
+    React.useState(false);
+  const [infoTooltipLoginPopupOpen, setInfoTooltipLoginPopupOpen] =
+    React.useState(false);
+  const [cards, setCards] = React.useState([]);
+
   const isSomePopupOpen =
     isEditProfilePopupOpen ||
     isAddPlacePopupOpen ||
     isEditAvatarPopupOpen ||
-    selectedCard;
-  const [cards, setCards] = React.useState([]);
+    selectedCard ||
+    infoTooltipRegisterPopupOpen ||
+    infoTooltipLoginPopupOpen;
 
   //открыть попапы
   function openPopupEdit() {
@@ -46,6 +55,15 @@ export default function App() {
   }
   function handleCardClick(card) {
     setSelectedCard(card);
+  }
+  //infoTooltip
+  function openInfoTooltipRegister() {
+    setInfoTooltipRegisterPopupOpen(true);
+    loggedIn = true;
+  }
+  function openInfoTooltipLogin() {
+    setInfoTooltipLoginPopupOpen(true);
+    loggedIn = true;
   }
 
   //закрытие на темный фон
@@ -68,6 +86,8 @@ export default function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setInfoTooltipRegisterPopupOpen(false);
+    setInfoTooltipLoginPopupOpen(false);
   }
 
   //поставить лайк
@@ -181,17 +201,12 @@ export default function App() {
         console.log(error);
       });
   }, []);
-  let loggedIn = false; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
+  let loggedIn = true; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
 
   return (
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
-          {<Login /> && (
-            <Header anotherPage="Регистрация" pathPage="/sign-up" />
-          )}
-          {/*<Register /> && <Header anotherPage="Войти" pathPage="/sign-in" />*/}
-          {/*<Register /> && <Header email='email' anotherPage="Выйти" pathPage="/main" />*/}
           <Routes>
             <Route
               path="/"
@@ -203,6 +218,9 @@ export default function App() {
                 )
               }
             />
+            {
+              //<Header email="email" anotherPage="Выйти" pathPage="/main" />
+            }
             <Route
               path="/main"
               element={
@@ -253,12 +271,36 @@ export default function App() {
               path="/sign-in"
               element={
                 <>
-                  <Login />
-      
+                  <Header anotherPage="Регистрация" pathPage="/sign-up" />
+                  <Login onInfoTooltip={openInfoTooltipLogin} />
+                  <InfoTooltip
+                    name="InfoTooltip-login"
+                    popupUnionIcon={popupUnionIconTheCross}
+                    text={"Что-то пошло не так! Попробуйте ещё раз."}
+                    isOpen={infoTooltipLoginPopupOpen}
+                    onClose={closeAllPopups}
+                    //onUpdateUser={handleUpdateUser}
+                  />
                 </>
               }
             />
-            <Route path="/sign-up" element={<Register />} />
+            <Route
+              path="/sign-up"
+              element={
+                <>
+                  <Header anotherPage="Войти" pathPage="/sign-in" />
+                  <Register onInfoTooltip={openInfoTooltipRegister} />
+                  <InfoTooltip
+                    name="InfoTooltip-register"
+                    popupUnionIcon={popupUnionIconCheckMark}
+                    text={"Вы успешно зарегистрировались!"}
+                    isOpen={infoTooltipRegisterPopupOpen}
+                    onClose={closeAllPopups}
+                    //onUpdateUser={handleUpdateUser}
+                  />
+                </>
+              }
+            />
           </Routes>
         </div>
       </CurrentUserContext.Provider>

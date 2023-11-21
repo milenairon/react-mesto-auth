@@ -1,7 +1,25 @@
 //path="/sign-in"
 import React from "react";
 
-export default function HomePage({ name, titleText, buttonText, children }) {
+export default function HomePage({
+  name,
+  titleText,
+  buttonText,
+  children,
+  onInfoTooltip,
+  onSubmit,
+}) {
+  //Управляемые компоненты
+  const [formValue, setFormValue] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  //Сработает при изменении инпутов
+  function handleChangeInput(e) {
+    const { name, value } = e.target;
+    setFormValue({ ...formValue, [name]: value });
+  }
   return (
     <div className={`popup popup_place_${name}`}>
       <h2 className="popup__title popup__title_theme_dark popup__title_position_center">
@@ -10,19 +28,19 @@ export default function HomePage({ name, titleText, buttonText, children }) {
       <form
         name={name}
         className={`popup__form popup__form_type_${name}`}
-        //onSubmit={onSubmit}
+        onSubmit={onSubmit}
       >
         <label className="popup__field">
           <input
             className="popup__email popup__input popup__input_theme_dark"
             type="email"
             name="email"
+            value={formValue.email}
             minLength="2"
             maxLength="40"
             placeholder="Email"
             required
-            //value={email}
-            //onChange={handleChangeEmail}
+            onChange={handleChangeInput}
           />
           <span className="popup__input-error-message email-input-error-message"></span>
         </label>
@@ -31,10 +49,10 @@ export default function HomePage({ name, titleText, buttonText, children }) {
             className="popup__password popup__input popup__input_theme_dark"
             type="password"
             name="password"
+            value={formValue.password}
             placeholder="Пароль"
             required
-            //value={password}
-            //onChange={handleChangePassword}
+            onChange={handleChangeInput}
           />
           <span className="popup__input-error-message password-input-error-message"></span>
         </label>

@@ -2,7 +2,7 @@
   content: none;
   position: static;
   background-color: rgb(0, 0, 0);
-  cursor: none;
+  cursor: default;
   display: block;
   visibility: visible;
   opacity: 1;

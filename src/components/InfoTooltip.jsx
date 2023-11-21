@@ -1,6 +1,8 @@
-export default function InfoTooltip() {
+import popupCloseIcon from "../images/close-icon.svg";
+
+export default function InfoTooltip(props) {
   return (
-    /*<div
+    <div
       className={`popup popup_place_${props.name} ${
         !props.isOpen ? "" : "popup_opened"
       }`}
@@ -18,24 +20,15 @@ export default function InfoTooltip() {
             alt="Крестик закрытия"
           />
         </button>
-        <h2 className="popup__title">{props.title}</h2>
-        <form
-          name={props.name}
-          className={`popup__form popup__form_type_${props.name}`}
-          onSubmit={props.onSubmit}
-        >
-          {props.children}
-          <button
-            aria-label={props.buttonText}
-            className="popup__button"
-            type="submit"
-          >
-            {props.buttonText}
-          </button>
-        </form>
+        <div className='popup__wrapper'>
+        <img
+            className="popup__union-icon"
+            src={props.popupUnionIcon}
+            alt="Галочка или крестик"
+          />
+          <p className='popup__text'>{props.text}</p>
+        </div>
       </div>
-    </div>*/
-    console.log(1)
+    </div>
   );
 }
-/*<InfoTooltip /> */

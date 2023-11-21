@@ -89,3 +89,7 @@
 /*Register*/
 @import url(../blocks/popup/_place/_register/popop_place_register.css);
 @import url(../blocks/popup/__form/_type/_register/popup__form_type_register.css);
+
+/*Popup InfoTooltip*/
+@import url(../blocks/popup/__text/popup__text.css);
+@import url(../blocks/popup/__union-icon/popup__union-icon.css);
