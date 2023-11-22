@@ -6,20 +6,22 @@ export default function HomePage({
   titleText,
   buttonText,
   children,
-  onInfoTooltip,
   onSubmit,
+  handleChangeInput,
+  email,
+  password,
 }) {
-  //Управляемые компоненты
+  /*//Управляемые компоненты
   const [formValue, setFormValue] = React.useState({
     email: "",
     password: "",
   });
-
+  
   //Сработает при изменении инпутов
   function handleChangeInput(e) {
     const { name, value } = e.target;
     setFormValue({ ...formValue, [name]: value });
-  }
+  }*/
   return (
     <div className={`popup popup_place_${name}`}>
       <h2 className="popup__title popup__title_theme_dark popup__title_position_center">
@@ -35,7 +37,7 @@ export default function HomePage({
             className="popup__email popup__input popup__input_theme_dark"
             type="email"
             name="email"
-            value={formValue.email}
+            value={email}
             minLength="2"
             maxLength="40"
             placeholder="Email"
@@ -49,7 +51,7 @@ export default function HomePage({
             className="popup__password popup__input popup__input_theme_dark"
             type="password"
             name="password"
-            value={formValue.password}
+            value={password}
             placeholder="Пароль"
             required
             onChange={handleChangeInput}

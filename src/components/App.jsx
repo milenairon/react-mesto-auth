@@ -1,6 +1,7 @@
 //React
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+
 //блоки
 import Header from "./Header.jsx";
 import Login from "./Login.jsx";
@@ -15,8 +16,10 @@ import EditProfilePopup from "./EditProfilePopup.jsx";
 import EditAvatarPopup from "./EditAvatarPopup.jsx";
 import AddPlacePopup from "./AddPlacePopup.jsx";
 import InfoTooltip from "./InfoTooltip";
-//прочее
+//Запросы
 import api from "../utils/Api";
+import * as auth from "../utils/auth";
+//прочее
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import popupUnionIconCheckMark from "../images/popupUnionIconCheckMark.svg";
 import popupUnionIconTheCross from "../images/popupUnionIconTheCross.svg";
@@ -29,19 +32,21 @@ export default function App() {
     React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState(null);
-  const [infoTooltipRegisterPopupOpen, setInfoTooltipRegisterPopupOpen] =
+  const [infoTooltipFailPopupOpen, setInfoTooltipFailPopupOpen] =
     React.useState(false);
-  const [infoTooltipLoginPopupOpen, setInfoTooltipLoginPopupOpen] =
+  const [infoTooltipSuccessPopupOpen, setInfoTooltipSuccessPopupOpen] =
     React.useState(false);
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const navigate = useNavigate();
 
   const isSomePopupOpen =
     isEditProfilePopupOpen ||
     isAddPlacePopupOpen ||
     isEditAvatarPopupOpen ||
     selectedCard ||
-    infoTooltipRegisterPopupOpen ||
-    infoTooltipLoginPopupOpen;
+    infoTooltipFailPopupOpen ||
+    infoTooltipSuccessPopupOpen;
 
   //открыть попапы
   function openPopupEdit() {
@@ -57,13 +62,12 @@ export default function App() {
     setSelectedCard(card);
   }
   //infoTooltip
-  function openInfoTooltipRegister() {
-    setInfoTooltipRegisterPopupOpen(true);
-    loggedIn = true;
+  function openInfoTooltipFail() {
+    setInfoTooltipFailPopupOpen(true);
   }
-  function openInfoTooltipLogin() {
-    setInfoTooltipLoginPopupOpen(true);
-    loggedIn = true;
+  function openInfoTooltipSuccess() {
+    setInfoTooltipSuccessPopupOpen(true);
+    setLoggedIn(true);
   }
 
   //закрытие на темный фон
@@ -86,8 +90,8 @@ export default function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
-    setInfoTooltipRegisterPopupOpen(false);
-    setInfoTooltipLoginPopupOpen(false);
+    setInfoTooltipFailPopupOpen(false);
+    setInfoTooltipSuccessPopupOpen(false);
   }
 
   //поставить лайк
@@ -201,8 +205,42 @@ export default function App() {
         console.log(error);
       });
   }, []);
-  let loggedIn = false; ////////////////////////////////////////////////////МЕНЯЙ МЕНЯЙ МЕНЯЙ
 
+  //РЕГИСТРАЦИЯ
+  const [formValue, setFormValue] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  //Сработает при изменении инпутов
+  function handleChangeInput(e) {
+    const { name, value } = e.target;
+    setFormValue({ ...formValue, [name]: value });
+    console.log(formValue)
+  }
+
+  //Отправка формы при регистрации
+  function handleSubmitRegister(e) {
+    e.preventDefault();
+    auth
+      .register(formValue.email, formValue.password)
+      .then(() => {
+        console.log(formValue.email, formValue.password)
+        //передать данные в main
+        //открыть попап "вы успешно зарегистрировались"
+        openInfoTooltipSuccess();
+        //перейти на страницу входа в систему
+        navigate("/sign-in");
+        /*setPopupImage(resolve);//
+        setPopupTitle("Вы успешно зарегистрировались!");
+        navigate("/sign-in"); //перейти на страницу входа в систему*/
+      })
+      .catch(() => {
+        openInfoTooltipFail();
+        //setPopupImage(reject);
+      });
+    //.finally(handleInfoTooltip);
+  }
   return (
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
@@ -218,13 +256,15 @@ export default function App() {
                 )
               }
             />
-            {
-              //<Header email="email" anotherPage="Выйти" pathPage="/main" />
-            }
             <Route
               path="/main"
               element={
                 <>
+                  <Header
+                    email={formValue.email}
+                    anotherPage="Выйти"
+                    pathPage="/main"
+                  />
                   <ProtectedRouteElement
                     element={Main}
                     loggedIn={loggedIn}
@@ -245,14 +285,7 @@ export default function App() {
               element={
                 <>
                   <Header anotherPage="Регистрация" pathPage="/sign-up" />
-                  <Login onInfoTooltip={openInfoTooltipLogin} />
-                  <InfoTooltip
-                    name="InfoTooltip-login"
-                    popupUnionIcon={popupUnionIconTheCross}
-                    text={"Что-то пошло не так! Попробуйте ещё раз."}
-                    isOpen={infoTooltipLoginPopupOpen}
-                    onClose={closeAllPopups}
-                    //onUpdateUser={handleUpdateUser}
+                  <Login
                   />
                 </>
               }
@@ -262,14 +295,11 @@ export default function App() {
               element={
                 <>
                   <Header anotherPage="Войти" pathPage="/sign-in" />
-                  <Register onInfoTooltip={openInfoTooltipRegister} />
-                  <InfoTooltip
-                    name="InfoTooltip-register"
-                    popupUnionIcon={popupUnionIconCheckMark}
-                    text={"Вы успешно зарегистрировались!"}
-                    isOpen={infoTooltipRegisterPopupOpen}
-                    onClose={closeAllPopups}
-                    //onUpdateUser={handleUpdateUser}
+                  <Register
+                    onSubmit={handleSubmitRegister}
+                    handleChangeInput={handleChangeInput}
+                    email={formValue.email}
+                    password={formValue.password}
                   />
                 </>
               }
@@ -296,6 +326,21 @@ export default function App() {
             buttonText="Да"
           ></PopupWithForm>
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+          <InfoTooltip
+            name="InfoTooltip-register"
+            popupUnionIcon={popupUnionIconCheckMark}
+            text={"Вы успешно зарегистрировались!"}
+            isOpen={infoTooltipSuccessPopupOpen}
+            onClose={closeAllPopups}
+          />
+
+          <InfoTooltip
+            name="InfoTooltip-login"
+            popupUnionIcon={popupUnionIconTheCross}
+            text={"Что-то пошло не так! Попробуйте ещё раз."}
+            isOpen={infoTooltipFailPopupOpen}
+            onClose={closeAllPopups}
+          />
         </div>
       </CurrentUserContext.Provider>
     </div>
