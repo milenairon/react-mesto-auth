@@ -1,20 +1,21 @@
 //path="/sign-in"
 import HomePage from "./HomePage";
-import api from "../utils/Api";
 
-export default function Login({ onInfoTooltip }) {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    //const { email, password } = formValue;
-    //api.register(username, password, email);
-  }
+export default function Login({
+  onSubmit,
+  handleChangeInput,
+  email,
+  password,
+}) {
   return (
     <HomePage
       name="login"
       titleText="Вход"
       buttonText="Войти"
-      onInfoTooltip={onInfoTooltip}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      handleChangeInput={handleChangeInput}
+      email={email}
+      password={password}
     />
   );
 }

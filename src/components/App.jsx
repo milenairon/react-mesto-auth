@@ -70,6 +70,10 @@ export default function App() {
     setLoggedIn(true);
   }
 
+  function handleLoggedInFalse() {
+    setLoggedIn(false);
+  }
+
   //закрытие на темный фон
   const handleOverlayClose = React.useCallback((event) => {
     if (event.target.classList.contains("popup")) {
@@ -216,7 +220,6 @@ export default function App() {
   function handleChangeInput(e) {
     const { name, value } = e.target;
     setFormValue({ ...formValue, [name]: value });
-    console.log(formValue)
   }
 
   //Отправка формы при регистрации
@@ -225,22 +228,32 @@ export default function App() {
     auth
       .register(formValue.email, formValue.password)
       .then(() => {
-        console.log(formValue.email, formValue.password)
-        //передать данные в main
-        //открыть попап "вы успешно зарегистрировались"
         openInfoTooltipSuccess();
-        //перейти на страницу входа в систему
         navigate("/sign-in");
-        /*setPopupImage(resolve);//
-        setPopupTitle("Вы успешно зарегистрировались!");
-        navigate("/sign-in"); //перейти на страницу входа в систему*/
       })
       .catch(() => {
         openInfoTooltipFail();
-        //setPopupImage(reject);
       });
-    //.finally(handleInfoTooltip);
   }
+  
+  //Отправка формы при входе в систему
+  function handleSubmitLogin(e) {
+    e.preventDefault();
+    auth
+      .authorize(formValue.email, formValue.password)
+      .then((token) => {
+        if (token) {
+          setLoggedIn(true);
+          navigate("/main");
+        } else {
+          openInfoTooltipFail();
+        }
+      })
+      .catch(() => {
+        openInfoTooltipFail();
+      });
+  }
+
   return (
     <div className="app">
       <CurrentUserContext.Provider value={currentUser}>
@@ -263,7 +276,8 @@ export default function App() {
                   <Header
                     email={formValue.email}
                     anotherPage="Выйти"
-                    pathPage="/main"
+                    pathPage="/sign-in"
+                    onClick={handleLoggedInFalse}
                   />
                   <ProtectedRouteElement
                     element={Main}
@@ -286,6 +300,10 @@ export default function App() {
                 <>
                   <Header anotherPage="Регистрация" pathPage="/sign-up" />
                   <Login
+                    onSubmit={handleSubmitLogin}
+                    handleChangeInput={handleChangeInput}
+                    email={formValue.email}
+                    password={formValue.password}
                   />
                 </>
               }

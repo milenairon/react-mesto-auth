@@ -11,17 +11,6 @@ export default function HomePage({
   email,
   password,
 }) {
-  /*//Управляемые компоненты
-  const [formValue, setFormValue] = React.useState({
-    email: "",
-    password: "",
-  });
-  
-  //Сработает при изменении инпутов
-  function handleChangeInput(e) {
-    const { name, value } = e.target;
-    setFormValue({ ...formValue, [name]: value });
-  }*/
   return (
     <div className={`popup popup_place_${name}`}>
       <h2 className="popup__title popup__title_theme_dark popup__title_position_center">

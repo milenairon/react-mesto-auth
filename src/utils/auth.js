@@ -44,17 +44,11 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({ email, password }),
   })
-    .then((response) => {
-      try {
-        if (response.status === 200) {
-          return response.json();
-        }
-      } catch (e) {
-        return e;
-      }
-    })
     .then((res) => {
-      return res;
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(res);
     })
     .catch((err) => {
       if (err.status === 400) {
