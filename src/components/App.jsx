@@ -38,6 +38,7 @@ export default function App() {
     React.useState(false);
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [emailName, setEmailName] = React.useState(null);
   const navigate = useNavigate();
 
   const isSomePopupOpen =
@@ -210,19 +211,47 @@ export default function App() {
       });
   }, []);
 
-  //РЕГИСТРАЦИЯ
+  //ПРОВЕРКА ТОКЕНА
+  function tokenCheck() {
+    // если у пользователя есть токен в localStorage,
+    // эта функция проверит валидность токена
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      // проверим токен
+      auth
+        .checkValidityToken(jwt)
+        .then((res) => {
+          if (res) {
+            // авторизуем пользователя
+            setLoggedIn(true);
+            navigate("/main", { replace: true });
+            setEmailName(res.data.email);
+          }
+        })
+        .catch((error) => {
+          //если запрос не ушел
+          console.log(error);
+        });
+    }
+  }
+
+  //ПРОВЕРКА ТОКЕНА
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  //ИЗМЕНЕНИЕ ИНПУТОВ
   const [formValue, setFormValue] = React.useState({
     email: "",
     password: "",
   });
 
-  //Сработает при изменении инпутов
   function handleChangeInput(e) {
     const { name, value } = e.target;
     setFormValue({ ...formValue, [name]: value });
   }
 
-  //Отправка формы при регистрации
+  //РЕГИСТРАЦИЯ
   function handleSubmitRegister(e) {
     e.preventDefault();
     auth
@@ -235,16 +264,18 @@ export default function App() {
         openInfoTooltipFail();
       });
   }
-  
-  //Отправка формы при входе в систему
+
+  //ВХОД В СИСТЕМУ
   function handleSubmitLogin(e) {
     e.preventDefault();
     auth
       .authorize(formValue.email, formValue.password)
-      .then((token) => {
-        if (token) {
+      .then((res) => {
+        if (res) {
+          localStorage.setItem("jwt", res.token);
+          setEmailName(formValue.email);
           setLoggedIn(true);
-          navigate("/main");
+          navigate("/main", { replace: true });
         } else {
           openInfoTooltipFail();
         }
@@ -274,7 +305,7 @@ export default function App() {
               element={
                 <>
                   <Header
-                    email={formValue.email}
+                    email={emailName}
                     anotherPage="Выйти"
                     pathPage="/sign-in"
                     onClick={handleLoggedInFalse}
@@ -322,6 +353,7 @@ export default function App() {
                 </>
               }
             />
+            <Route path="*" element={<Navigate to="/sign-up" replace />} />
           </Routes>
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
