@@ -1,7 +1,7 @@
 //path="/sign-in"
 import React from "react";
 
-export default function HomePage({
+export default function AuthPage({
   name,
   titleText,
   buttonText,

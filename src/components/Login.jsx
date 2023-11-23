@@ -1,5 +1,5 @@
 //path="/sign-in"
-import HomePage from "./HomePage";
+import AuthPage from "./AuthPage";
 
 export default function Login({
   onSubmit,
@@ -8,7 +8,7 @@ export default function Login({
   password,
 }) {
   return (
-    <HomePage
+    <AuthPage
       name="login"
       titleText="Вход"
       buttonText="Войти"

@@ -22,9 +22,6 @@ export const register = (email, password) => {
     })
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      return Promise.reject(err.status);
     });
 };
 
@@ -36,21 +33,17 @@ export const authorize = (email, password) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else if (res.status === 400) {
-        console.log("Некорректно заполнено одно из полей");
-      } else if (res.status === 401) {
-        console.log("Пользователь с email не найден");
-      } else {
-        console.log(res);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else if (res.status === 400) {
+      console.log("Некорректно заполнено одно из полей");
+    } else if (res.status === 401) {
+      console.log("Пользователь с email не найден");
+    } else {
+      console.log(res);
+    }
+  });
 };
 
 //Проверить валидность токена
@@ -80,8 +73,5 @@ export const checkValidityToken = (jwt) => {
     })
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };
